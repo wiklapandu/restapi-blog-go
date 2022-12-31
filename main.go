@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"go-restapi/helper"
 	blogModel "go-restapi/models/blog"
 	userModel "go-restapi/models/user"
 
@@ -78,13 +79,25 @@ func main() {
 			ctx.Abort()
 			return
 		}
+		password, _ := helper.HashPassword(inputPost.Password)
+		user := userModel.User{Name: inputPost.Name, Email: inputPost.Email, Password: password}
 
-		user := userModel.User{Name: inputPost.Name, Email: inputPost.Email}
+		result := DB.Create(&user)
+
+		if result.RowsAffected <= 0 {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "fail",
+				"message": "user is fail to create",
+			})
+
+			ctx.Abort()
+			return
+		}
 
 		sign := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), MyClaims{
-			ID:    123,
-			Name:  inputPost.Name,
-			Email: inputPost.Email,
+			ID:    user.ID,
+			Name:  user.Name,
+			Email: user.Password,
 		})
 
 		token, err := sign.SignedString(SecretKey)
@@ -92,7 +105,7 @@ func main() {
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"status":  "fail",
-				"message": "unauthorized token",
+				"message": "fail create token",
 			})
 
 			ctx.Abort()
