@@ -1,20 +1,16 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 
 	"go-restapi/helper"
-	blogModel "go-restapi/models/blog"
+	dbHelp "go-restapi/helper/database"
 	userModel "go-restapi/models/user"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 type MyClaims struct {
@@ -26,21 +22,9 @@ type MyClaims struct {
 
 var SecretKey = []byte(os.Getenv("SECRET_KEY"))
 
-var DB *gorm.DB
-
 func main() {
-	var err = godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Some error occured. Err: %s", err)
-	}
-
-	dsn := os.Getenv("DB_USER") + ":" + os.Getenv("DB_PASSWORD") + "@tcp(" + os.Getenv("DB_HOST") + ")/" + os.Getenv("DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
-	database, _ := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-
-	database.AutoMigrate(&blogModel.Blog{}, &blogModel.Category{}, &blogModel.BlogCats{})
-	database.AutoMigrate(&userModel.User{})
-
-	DB = database
+	dbHelp.RunDB()
+	DB := dbHelp.DB
 
 	route := gin.Default()
 
