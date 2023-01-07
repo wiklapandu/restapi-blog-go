@@ -97,7 +97,7 @@ func main() {
 		sign := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), MyClaims{
 			ID:    user.ID,
 			Name:  user.Name,
-			Email: user.Password,
+			Email: user.Email,
 		})
 
 		token, err := sign.SignedString(SecretKey)
@@ -113,6 +113,66 @@ func main() {
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{
+			"status": "success",
+			"token":  token,
+		})
+	})
+
+	route.POST("/login", func(ctx *gin.Context) {
+		var inputPost struct {
+			Email    string `json:"email" form:"email" binding:"required,email"`
+			Password string `json:"password" form:"password" binding:"required"`
+		}
+
+		if err := ctx.BindJSON(&inputPost); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status": "errors",
+				"errors": err.Error(),
+			})
+			ctx.Abort()
+			return
+		}
+
+		var user = userModel.User{Email: inputPost.Email}
+
+		result := DB.First(&user)
+
+		if result.RowsAffected <= 0 {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"status":  "fail",
+				"message": "user not register",
+			})
+			ctx.Abort()
+			return
+		}
+
+		if helper.CheckPassword(inputPost.Password, user.Password) {
+			ctx.JSON(http.StatusForbidden, gin.H{
+				"status":  "fail",
+				"message": "incorrect email and password",
+			})
+			ctx.Abort()
+			return
+		}
+
+		sign := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), MyClaims{
+			ID:    user.ID,
+			Name:  user.Name,
+			Email: user.Email,
+		})
+
+		token, err := sign.SignedString(SecretKey)
+
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "fail",
+				"message": "failed create token",
+			})
+			ctx.Abort()
+			return
+		}
+
+		ctx.JSON(http.StatusCreated, gin.H{
 			"status": "success",
 			"token":  token,
 		})
