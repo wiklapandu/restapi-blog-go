@@ -4,9 +4,11 @@ import "gorm.io/gorm"
 
 type Blog struct {
 	*gorm.Model
-	Title  string `json:"title" gorm:"column:title"`
-	Desc   string `json:"desc" gorm:"column:desc"`
-	Author uint   `json:"user_id" gorm:"column:user_id"`
+	Thumbnail string `json:"img" gotm:"column:img"`
+	Title     string `json:"title" gorm:"column:title"`
+	Slug      string `json:"slug" gorm:"column:slug"`
+	Desc      string `json:"desc" gorm:"column:desc"`
+	Author    uint   `json:"user_id" gorm:"column:user_id"`
 }
 
 type CatMeta struct {

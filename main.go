@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 
+	BlogController "go-restapi/controllers/blog"
 	"go-restapi/helper"
 	dbHelp "go-restapi/helper/database"
 	userModel "go-restapi/models/user"
@@ -162,5 +163,10 @@ func main() {
 		})
 	})
 
+	blog := route.Group("/blog")
+	{
+		blog.POST("/", BlogController.Postblog)
+		blog.GET("/", BlogController.Getblog)
+	}
 	route.Run()
 }
