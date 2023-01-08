@@ -7,6 +7,7 @@ import (
 	BlogController "go-restapi/controllers/blog"
 	"go-restapi/helper"
 	dbHelp "go-restapi/helper/database"
+	authMiddleware "go-restapi/middleware/auth"
 	userModel "go-restapi/models/user"
 
 	"github.com/dgrijalva/jwt-go"
@@ -165,7 +166,7 @@ func main() {
 
 	blog := route.Group("/blog")
 	{
-		blog.POST("/", BlogController.Postblog)
+		blog.POST("/", authMiddleware.AuthCheck(), BlogController.Postblog)
 		blog.GET("/", BlogController.Getblog)
 	}
 	route.Run()

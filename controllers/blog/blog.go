@@ -1,13 +1,22 @@
 package blog
 
 import (
+	"encoding/json"
 	dbHelp "go-restapi/helper/database"
 	blogModel "go-restapi/models/blog"
 	"net/http"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
 )
+
+type MyClaims struct {
+	*jwt.StandardClaims
+	ID    uint   `json:"ID"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}
 
 func Getblog(ctx *gin.Context) {
 	var blogs blogModel.Blog
@@ -21,6 +30,11 @@ func Getblog(ctx *gin.Context) {
 }
 
 func Postblog(ctx *gin.Context) {
+	data, _ := ctx.Get("user")
+	var user MyClaims
+	theJson, _ := json.Marshal(data)
+	json.Unmarshal(theJson, &user)
+
 	var inputPost struct {
 		Title string `json:"title" form:"title" binding:"required"`
 		Desc  string `json:"desc" form:"desc" binding:"required"`
@@ -39,9 +53,10 @@ func Postblog(ctx *gin.Context) {
 	}
 
 	newBlog := blogModel.Blog{
-		Title: inputPost.Title,
-		Slug:  slug.Make(inputPost.Title),
-		Desc:  inputPost.Desc,
+		Title:  inputPost.Title,
+		Slug:   slug.Make(inputPost.Title),
+		Desc:   inputPost.Desc,
+		Author: user.ID,
 	}
 
 	if result := DB.Create(&newBlog); result.RowsAffected <= 0 {
