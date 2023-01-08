@@ -167,6 +167,7 @@ func main() {
 	blog := route.Group("/blog")
 	{
 		blog.POST("/", authMiddleware.AuthCheck(), BlogController.Postblog)
+		blog.PUT("/:id", authMiddleware.AuthCheck(), BlogController.Putblog)
 		blog.GET("/", BlogController.Getblog)
 	}
 	route.Run()

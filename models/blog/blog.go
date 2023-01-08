@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Blog struct {
 	*gorm.Model
-	Thumbnail string `json:"img" gotm:"column:img"`
+	Thumbnail string `json:"img" gorm:"column:img"`
 	Title     string `json:"title" gorm:"column:title"`
 	Slug      string `json:"slug" gorm:"column:slug"`
 	Desc      string `json:"desc" gorm:"column:desc"`
