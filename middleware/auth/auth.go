@@ -11,7 +11,7 @@ import (
 )
 
 type MyClaims struct {
-	*jwt.StandardClaims
+	jwt.StandardClaims
 	ID    uint   `json:"ID"`
 	Email string `json:"email"`
 	Name  string `json:"name"`

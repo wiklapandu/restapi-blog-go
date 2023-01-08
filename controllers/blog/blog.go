@@ -132,13 +132,13 @@ func Putblog(ctx *gin.Context) {
 		return
 	}
 
-	DB.Delete(&blogModel.BlogCats{Blog: updateBlog.ID})
+	DB.Unscoped().Where("blog_id = ?", updateBlog.ID).Delete(&blogModel.BlogCats{})
 
 	for _, cat := range inputPost.Cat {
-		catFind := blogModel.BlogCats{Model: &gorm.Model{ID: updateBlog.ID}}
-		DB.First(&catFind)
-		catFind.Category = cat
-		DB.Save(&catFind)
+		DB.Create(&blogModel.BlogCats{
+			Blog:     updateBlog.ID,
+			Category: cat,
+		})
 	}
 
 	blog := struct {
