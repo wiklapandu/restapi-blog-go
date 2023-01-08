@@ -132,6 +132,8 @@ func Putblog(ctx *gin.Context) {
 		return
 	}
 
+	DB.Delete(&blogModel.BlogCats{Blog: updateBlog.ID})
+
 	for _, cat := range inputPost.Cat {
 		catFind := blogModel.BlogCats{Model: &gorm.Model{ID: updateBlog.ID}}
 		DB.First(&catFind)

@@ -27,7 +27,7 @@ func AuthCheck() gin.HandlerFunc {
 		}
 
 		var header struct {
-			Token *string `header:"Authorization"`
+			Token *string `header:"Authorization" binding:"required"`
 		}
 
 		if err := ctx.ShouldBindHeader(&header); err != nil {
