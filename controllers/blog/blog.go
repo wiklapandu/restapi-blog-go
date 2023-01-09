@@ -31,6 +31,26 @@ func Getblog(ctx *gin.Context) {
 	})
 }
 
+func GetblogBySlug(ctx *gin.Context) {
+	slug := ctx.Param("slug")
+	var blog blogModel.Blog
+	DB := dbHelp.DB
+
+	if result := DB.Where(&blogModel.Blog{Slug: slug}).First(&blog); result.RowsAffected <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "fail",
+			"message": "failed find blog",
+		})
+		ctx.Abort()
+		return
+	}
+
+	ctx.JSON(200, gin.H{
+		"status": "success",
+		"blog":   blog,
+	})
+}
+
 func Postblog(ctx *gin.Context) {
 	data, _ := ctx.Get("user")
 	var user MyClaims
