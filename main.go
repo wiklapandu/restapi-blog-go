@@ -43,6 +43,7 @@ func main() {
 	{
 		blog.POST("/", authMiddleware.AuthCheck(), BlogController.Postblog)
 		blog.PUT("/:id", authMiddleware.AuthCheck(), BlogController.Putblog)
+		blog.DELETE("/:id", authMiddleware.AuthCheck(), BlogController.Deleteblog)
 		blog.GET("/", BlogController.Getblog)
 	}
 	route.Run()

@@ -21,7 +21,7 @@ type MyClaims struct {
 }
 
 func Getblog(ctx *gin.Context) {
-	var blogs blogModel.Blog
+	var blogs []blogModel.Blog
 	var DB = dbHelp.DB
 	DB.Find(&blogs)
 
@@ -149,5 +149,45 @@ func Putblog(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{
 		"status": "success",
 		"blog":   blog,
+	})
+}
+
+func Deleteblog(ctx *gin.Context) {
+	data, _ := ctx.Get("user")
+	var user MyClaims
+	theJson, _ := json.Marshal(data)
+	json.Unmarshal(theJson, &user)
+
+	var DB = dbHelp.DB
+
+	idParams, _ := strconv.ParseUint(ctx.Param("id"), 10, 32)
+
+	var blog = blogModel.Blog{
+		Model:  &gorm.Model{ID: uint(idParams)},
+		Author: user.ID,
+	}
+
+	if result := DB.First(&blog); result.RowsAffected <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "fail",
+			"message": "failed found blog",
+		})
+		ctx.Abort()
+		return
+	}
+
+	DB.Unscoped().Where("blog_id = ?", blog.ID).Delete(&blogModel.BlogCats{})
+
+	if result := DB.Unscoped().Delete(&blog); result.RowsAffected <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":  "fail",
+			"message": "failed delete blog",
+		})
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "success deleted blog",
 	})
 }
