@@ -94,3 +94,209 @@ untuk menjalankan api ketik di cli
 ```cli
 go run main.go
 ```
+
+## How to Use
+### Login User
+- URL: `/login`
+  - Method `POST`
+  - Data Params
+    - Required:
+      - `email` type **string** `required|email`
+      - `password` type **string** `required|email`
+  - Success Response:
+    - Code: `201` <br> Content: 
+      ```json
+        {
+            "status": "success",
+            "token":  "TOKEN_AUTH",
+        }
+      ```
+  - Error Response:
+    - Code: `400` <br> Content: 
+      ```json
+        {
+          "errors": "Key: 'Password' Error:Field validation for 'Password' failed on the 'required' tag",
+          "status": "errors"
+        }
+      ```
+  - Fail Response:
+    - Code: `400` <br> Content: 
+      ```json
+        {
+			"status":  "fail",
+			"message": "MESSAGE",
+		}
+      ```
+
+### Login User
+- URL: `/login`
+  - Method `POST`
+  - Data Params
+    - Required:
+      - `name` type **string** `required`
+      - `email` type **string** `required|email`
+      - `password` type **string** `required|match:repeat_password`
+      - `repeat_password` type **string** `required`
+  - Success Response:
+    - Code: `201` <br> Content: 
+      ```json
+        {
+            "status": "success",
+            "token":  "TOKEN_AUTH",
+        }
+      ```
+  - Error Response:
+    - Code: `400` <br> Content: 
+      ```json
+        {
+          "errors": "Key: 'Password' Error:Field validation for 'Password' failed on the 'required' tag",
+          "status": "errors"
+        }
+      ```
+  - Fail Response:
+    - Code: `400` <br> Content: 
+      ```json
+        {
+			"status":  "fail",
+			"message": "MESSAGE",
+		}
+      ```
+
+### Add Blog
+- URL: `/blog`
+  - Method `POST`
+  - Data Params
+    - `title` type **string** `required`
+    - `desc` type **string** `required`
+    - `cat` type **array** `required`
+  - Header Required
+    ```json
+    {
+        "Authorization": "TOKEN_AUTH"
+    }
+    ```
+  - Success Response:
+    - Code: `201` <br> Content: 
+      ```json
+        {
+            "status": "success",
+            "blog":  {
+                "title": "BLOG_TITLE",
+                "slug": "BLOG_SLUG",
+                "desc": "BLOG_DESC",
+                "user_id": "user_id",
+                "categories": [],
+            },
+        }
+      ```
+  - Error Response:
+    - Code: `400` <br> Content: 
+      ```json
+        {
+          "errors": "Key: 'Title' Error:Field validation for 'Title' failed on the 'required' tag",
+          "status": "errors"
+        }
+      ```
+  - Fail Response:
+    - Code: `400` <br> Content: 
+      ```json
+        {
+			"status":  "fail",
+			"message": "MESSAGE",
+		}
+      ```
+- URL: `/blog/:id`
+  - Method `PUT`
+  - Data Params
+    - `title` type **string** `required`
+    - `desc` type **string** `required`
+    - `cat` type **array** `required`
+  - Header Required
+    ```json
+    {
+        "Authorization": "TOKEN_AUTH"
+    }
+    ```
+  - Success Response:
+    - Code: `201` <br> Content: 
+      ```json
+        {
+            "status": "success",
+            "blog":  {
+                "title": "BLOG_TITLE",
+                "slug": "BLOG_SLUG",
+                "desc": "BLOG_DESC",
+                "user_id": "user_id",
+                "categories": [],
+            },
+        }
+      ```
+  - Error Response:
+    - Code: `400` <br> Content: 
+      ```json
+        {
+          "errors": "Key: 'Title' Error:Field validation for 'Title' failed on the 'required' tag",
+          "status": "errors"
+        }
+      ```
+  - Fail Response:
+    - Code: `400` <br> Content: 
+      ```json
+        {
+			"status":  "fail",
+			"message": "MESSAGE",
+		}
+      ```
+- URL: `/blog/:id`
+  - Method `DELETE`
+- URL: `/blog/:slug`
+  - Method `GET`
+  - Success Response:
+    - Code: `201` <br> Content: 
+      ```json
+        {
+            "status": "success",
+            "blog":  {
+                  "title": "BLOG_TITLE",
+                  "slug": "BLOG_SLUG",
+                  "desc": "BLOG_DESC",
+                  "user_id": "user_id",
+                  "categories": [],
+                }
+        }
+      ```
+  - Error Response:
+    - Code: `400` <br> Content: 
+      ```json
+        {
+          "errors": "Key: 'Title' Error:Field validation for 'Title' failed on the 'required' tag",
+          "status": "errors"
+        }
+      ```
+  - Fail Response:
+    - Code: `400` <br> Content: 
+      ```json
+        {
+			"status":  "fail",
+			"message": "MESSAGE",
+		}
+      ```
+- URL: `/blog/`
+  - Method `GET`
+  - Method `GET`
+  - Success Response:
+    - Code: `201` <br> Content: 
+      ```json
+        {
+            "status": "success",
+            "blogs":  [
+                {
+                  "title": "BLOG_TITLE",
+                  "slug": "BLOG_SLUG",
+                  "desc": "BLOG_DESC",
+                  "user_id": "user_id",
+                  "categories": [],
+                }
+            ],
+        }
+      ```
