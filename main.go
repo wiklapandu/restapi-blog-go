@@ -5,6 +5,7 @@ import (
 
 	AuthController "go-restapi/controllers/auth"
 	BlogController "go-restapi/controllers/blog"
+	CategoryController "go-restapi/controllers/category"
 	dbHelp "go-restapi/helper/database"
 	authMiddleware "go-restapi/middleware/auth"
 
@@ -46,6 +47,11 @@ func main() {
 		blog.DELETE("/:id", authMiddleware.AuthCheck(), BlogController.Deleteblog)
 		blog.GET("/:slug", BlogController.GetblogBySlug)
 		blog.GET("/", BlogController.Getblog)
+
+		category := blog.Group("/category")
+		{
+			category.POST("/", authMiddleware.AuthCheck(), CategoryController.Postcategory)
+		}
 	}
 	route.Run()
 }
