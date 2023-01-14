@@ -51,6 +51,7 @@ func main() {
 		category := blog.Group("/category")
 		{
 			category.POST("/", authMiddleware.AuthCheck(), CategoryController.Postcategory)
+			category.PUT("/:id", authMiddleware.AuthCheck(), CategoryController.Putcategory)
 		}
 	}
 	route.Run()
